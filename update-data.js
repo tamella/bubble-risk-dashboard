@@ -86,6 +86,31 @@ const output = {
   indicators
 };
 
-fs.writeFileSync('data.json', JSON.stringify(data, null, 2));
+import fs from "fs";
 
-console.log("Dashboard data updated:", level, score);
+const data = {
+  score: 65,
+  level: "Moderate",
+  date: new Date().toISOString().slice(0, 10),
+  brief: "Overall bubble risk is moderate based on valuation, speculation, and liquidity signals.",
+  indicators: [
+    {
+      name: "Valuations vs History",
+      status: "Elevated",
+      description: "Equity valuations remain well above long-term averages."
+    },
+    {
+      name: "Speculative Activity",
+      status: "Watch",
+      description: "IPO and retail trading activity is elevated but stable."
+    },
+    {
+      name: "Liquidity Conditions",
+      status: "Tightening",
+      description: "Financial conditions have tightened relative to last quarter."
+    }
+  ]
+};
+
+fs.writeFileSync("data.json", JSON.stringify(data, null, 2));
+console.log("✅ data.json updated");
