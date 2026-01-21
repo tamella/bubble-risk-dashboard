@@ -22,7 +22,7 @@ h1{text-align:center}
   Today’s Change: <strong id="changeSummary"></strong>
 </div>
 
-<div id="grid" class="grid"></div>
+<div id="indicators"></div>
 <div id="brief" class="brief"></div>
 <div id="updated" class="updated"></div>
 <script>
@@ -32,14 +32,25 @@ fetch('data.json').then(r=>r.json()).then(d=>{
   document.getElementById('updated').innerText = "Last updated: " + d.date;
   document.getElementById("changeSummary").textContent = data.changeSummary;
 
-  const g=document.getElementById('grid');
-  d.indicators.forEach(i=>{
-    const c=document.createElement('div');
-    c.className='card';
-    c.innerHTML=`<strong>${i.name}</strong><br>
-    <span class="${i.color}">${i.icon}</span> ${i.description}`;
-    g.appendChild(c);
-  });
+const container = document.getElementById("indicators");
+container.innerHTML = "";
+
+if (!Array.isArray(data.indicators)) {
+  container.innerHTML = "<p>No indicators available.</p>";
+  return;
+}
+
+data.indicators.forEach(indicator => {
+  const div = document.createElement("div");
+  div.className = "indicator";
+
+  div.innerHTML = `
+    <h3>${indicator.name}</h3>
+    <p><strong>Status:</strong> ${indicator.status}</p>
+    <p>${indicator.description}</p>
+  `;
+
+  container.appendChild(div);
 });
 </script>
 </body>
