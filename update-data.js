@@ -86,6 +86,6 @@ const output = {
   indicators
 };
 
-fs.writeFileSync("docs/data.json", JSON.stringify(output, null, 2));
+fs.writeFileSync('data.json', JSON.stringify(data, null, 2));
 
 console.log("Dashboard data updated:", level, score);
