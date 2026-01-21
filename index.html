@@ -30,6 +30,8 @@ fetch('data.json').then(r=>r.json()).then(d=>{
   document.getElementById('score').innerText = d.score + " / 20 — " + d.level;
   document.getElementById('brief').innerHTML = "<strong>Daily Briefing:</strong> " + d.brief;
   document.getElementById('updated').innerText = "Last updated: " + d.date;
+  document.getElementById("changeSummary").textContent = data.changeSummary;
+
   const g=document.getElementById('grid');
   d.indicators.forEach(i=>{
     const c=document.createElement('div');
