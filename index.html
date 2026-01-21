@@ -18,40 +18,53 @@ h1{text-align:center}
 <body>
 <h1>📊 Bubble Risk Dashboard</h1>
 <div id="score" class="score">Loading…</div>
+  <div id="level" class="level"></div>
+  <div id="brief" class="brief"></div>
   <div class="change-summary">
   Today’s Change: <strong id="changeSummary"></strong>
 </div>
-
 <div id="indicators"></div>
-<div id="brief" class="brief"></div>
 <div id="updated" class="updated"></div>
 <script>
-fetch('data.json').then(r=>r.json()).then(d=>{
-  document.getElementById('score').innerText = d.score + " / 20 — " + d.level;
-  document.getElementById('brief').innerHTML = "<strong>Daily Briefing:</strong> " + d.brief;
-  document.getElementById('updated').innerText = "Last updated: " + d.date;
-  document.getElementById("changeSummary").textContent = data.changeSummary;
+fetch("data.json")
+  .then(res => res.json())
+  .then(data => {
+    // Core fields
+    document.getElementById("updated").textContent = `Data as of ${data.date}`;
+    document.getElementById("score").textContent = data.score;
+    document.getElementById("level").textContent = data.level;
+    document.getElementById("brief").textContent = data.brief;
 
-const container = document.getElementById("indicators");
-container.innerHTML = "";
+    // Today's change
+    document.getElementById("changeSummary").textContent =
+      data.changeSummary || "No change data available.";
 
-if (!Array.isArray(data.indicators)) {
-  container.innerHTML = "<p>No indicators available.</p>";
-  return;
-}
+    // Indicators
+    const container = document.getElementById("indicators");
+    container.innerHTML = "";
 
-data.indicators.forEach(indicator => {
-  const div = document.createElement("div");
-  div.className = "indicator";
+    if (!Array.isArray(data.indicators)) {
+      container.innerHTML = "<p>No indicators available.</p>";
+      return;
+    }
 
-  div.innerHTML = `
-    <h3>${indicator.name}</h3>
-    <p><strong>Status:</strong> ${indicator.status}</p>
-    <p>${indicator.description}</p>
-  `;
+    data.indicators.forEach(indicator => {
+      const div = document.createElement("div");
+      div.className = "indicator";
 
-  container.appendChild(div);
-});
+      div.innerHTML = `
+        <h3>${indicator.name}</h3>
+        <p><strong>Status:</strong> ${indicator.status}</p>
+        <p>${indicator.description}</p>
+      `;
+
+      container.appendChild(div);
+    });
+  })
+  .catch(err => {
+    console.error("Dashboard load error:", err);
+  });
 </script>
+
 </body>
 </html>
