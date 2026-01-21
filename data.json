@@ -1,7 +1,29 @@
 {
-  "score": 0,
-  "level": "Initializing",
-  "date": "2026-01-12",
-  "brief": "Dashboard initializing with live data.",
-  "indicators": []
+  "score": 65,
+  "level": "Moderate",
+  "date": "2026-01-21",
+  "brief": "Overall bubble risk is moderate based on valuation, speculation, and liquidity signals.",
+  "indicators": [
+    {
+      "name": "Valuations vs History",
+      "status": "Elevated",
+      "value": 78,
+      "threshold": 70,
+      "description": "Equity valuations remain well above long-term averages."
+    },
+    {
+      "name": "Speculative Activity",
+      "status": "Moderate",
+      "value": 55,
+      "threshold": 65,
+      "description": "IPO and retail trading activity is stable but watchful."
+    },
+    {
+      "name": "Liquidity Conditions",
+      "status": "Tightening",
+      "value": 62,
+      "threshold": 60,
+      "description": "Financial conditions have tightened relative to last quarter."
+    }
+  ]
 }
