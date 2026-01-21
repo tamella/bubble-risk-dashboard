@@ -1,7 +1,9 @@
 import fs from "fs";
 
+// Date
 const today = new Date().toISOString().slice(0, 10);
 
+// Indicators
 const indicators = [
   {
     name: "Valuations vs History",
@@ -68,17 +70,19 @@ const indicators = [
   }
 ];
 
-// Calculate composite risk score
+// Composite score
 const score = Math.round(
   indicators.reduce((sum, i) => sum + i.value, 0) / indicators.length
 );
 
+// Risk level
 let level = "Low";
 if (score >= 75) level = "Extreme";
 else if (score >= 60) level = "High";
 else if (score >= 45) level = "Moderate";
 
-const output = {
+// Final data object
+const data = {
   score,
   level,
   date: today,
@@ -86,31 +90,6 @@ const output = {
   indicators
 };
 
-import fs from "fs";
-
-const data = {
-  score: 65,
-  level: "Moderate",
-  date: new Date().toISOString().slice(0, 10),
-  brief: "Overall bubble risk is moderate based on valuation, speculation, and liquidity signals.",
-  indicators: [
-    {
-      name: "Valuations vs History",
-      status: "Elevated",
-      description: "Equity valuations remain well above long-term averages."
-    },
-    {
-      name: "Speculative Activity",
-      status: "Watch",
-      description: "IPO and retail trading activity is elevated but stable."
-    },
-    {
-      name: "Liquidity Conditions",
-      status: "Tightening",
-      description: "Financial conditions have tightened relative to last quarter."
-    }
-  ]
-};
-
+// Write file
 fs.writeFileSync("data.json", JSON.stringify(data, null, 2));
-console.log("✅ data.json updated");
+console.log("✅ data.json updated successfully");
