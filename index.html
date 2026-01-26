@@ -1,140 +1,156 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>Bubble Risk Dashboard</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-body{font-family:system-ui;background:#0f172a;color:#e5e7eb;padding:2rem}
-h1{text-align:center}
-.score{text-align:center;font-size:3rem;font-weight:700; color:#ffffff}
-.indicator {
-  background: #020617;
-  border-radius: 12px;
-  padding: 1rem;
-}
 
-.indicator h3 {
+<style>
+body {
+  font-family: system-ui;
+  background: #0f172a;
+  color: #e5e7eb;
+  padding: 1.25rem;
+}
+h1 {
+  text-align: center;
+  margin-bottom: 0.75rem;
+}
+.score {
+  text-align: center;
+  font-size: 2.6rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+.score-max {
+  opacity: 0.5;
+  font-size: 0.5em;
+}
+#distance {
+  text-align: center;
+  font-size: 0.9rem;
+  opacity: 0.8;
+  margin-bottom: 0.25rem;
+}
+#level {
+  text-align: center;
+  font-weight: 600;
   margin-bottom: 0.5rem;
 }
-
-.bar {
+.brief {
   background: #020617;
-  border-radius: 6px;
-  height: 10px;
-  overflow: hidden;
-  margin: 0.5rem 0;
+  border-left: 3px solid #f59e0b;
+  padding: 0.6rem 0.75rem;
+  margin: 0.75rem 0;
+  font-size: 0.95rem;
+}
+.change-summary {
+  text-align: center;
+  font-size: 0.85rem;
+  opacity: 0.9;
+  margin-top: 0.25rem;
+}
+.change-glyph {
+  margin: 0 0.25rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.change-up { color: #ef4444; }
+.change-down { color: #22c55e; }
+.change-flat { color: #9ca3af; }
+
+#indicators {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 0.75rem;
+  margin-top: 1rem;
 }
 
+.indicator {
+  background: #020617;
+  border-radius: 10px;
+  padding: 0.65rem 0.75rem;
+}
+.indicator h3 {
+  margin: 0 0 0.25rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+.bar {
+  background: #020617;
+  border-radius: 4px;
+  height: 8px;
+  margin: 0.35rem 0 0.4rem;
+}
 .bar-fill {
   height: 100%;
   transition: width 0.6s ease;
 }
-
-
-.bar-threshold {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: #facc15;
-  opacity: 0.9;
-}
-
-.indicator-meta {
-  font-size: 0.85rem;
-  opacity: 0.85;
-  margin-top: 0.3rem;
-}
-.score-max {
-  opacity: 0.6;
-  font-size: 0.6em;
-}
-  #indicators {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 1rem;
-  margin-top: 2rem;
-}
-  .status {
-  font-weight: 600;
-  margin-top: 0.25rem;
-}
+.green { background:#22c55e; }
+.yellow { background:#eab308; }
+.orange { background:#f59e0b; }
+.red { background:#ef4444; }
 
 .value {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
+  opacity: 0.75;
+}
+.status {
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin: 0.1rem 0;
+}
+.desc {
+  font-size: 0.82rem;
+  line-height: 1.25;
   opacity: 0.85;
 }
-
-.threshold {
-  margin-left: 0.5rem;
-  opacity: 0.7;
-  font-size: 0.8rem;
+.updated {
+  font-size: 0.75rem;
+  margin-top: 0.75rem;
+  text-align: right;
 }
-
-.desc {
-  margin-top: 0.5rem;
-  font-size: 0.9rem;
-  opacity: 0.9;
-}
-  /* Status coloring */
-.status-high {
-  border-left: 4px solid #ef4444;
-}
-
-.status-medium {
-  border-left: 4px solid #f59e0b;
-}
-
-.status-low {
-  border-left: 4px solid #22c55e;
-}
-
-.status {
-  font-weight: 600;
-  margin-top: 0.25rem;
-}
-.green { background: #22c55e; color: #22c55e; }
-.yellow { background: #eab308; color: #eab308; }
-.orange { background: #f59e0b; color: #f59e0b; }
-.red { background: #ef4444; color: #ef4444; }
-.updated{opacity:.7;margin-top:1rem;text-align:right}
-.brief{background:#020617;border-left:4px solid #f59e0b;padding:1rem;margin-top:1.5rem}
 </style>
 </head>
+
 <body>
+
 <h1>Bubble Risk Dashboard</h1>
+
 <div class="score">
   <span id="scoreValue">--</span><span class="score-max"> / 100</span>
 </div>
-  <div id="distance" class="distance"></div>
-  <div id="level" class="level"></div>
-  <div id="brief" class="brief"></div>
-  <div class="change-summary">
-  Today’s Change: <strong id="changeSummary"></strong>
+
+<div id="distance"></div>
+<div id="level"></div>
+<div id="brief" class="brief"></div>
+
+<div class="change-summary">
+  Today’s Change:
+  <span id="changeGlyph" class="change-glyph"></span>
+  <strong id="changeSummary"></strong>
 </div>
-<div id="indicators" class="indicator-grid"></div>
+
+<div id="indicators"></div>
 <div id="updated" class="updated"></div>
+
 <script>
-  
 const STATUS_ORDER = {
   "Extreme": 5,
   "High": 4,
   "Elevated": 3,
   "Rising": 3,
-  "Compressed": 3,
+  "Tightening": 3,
+  "Inverted Risk": 4,
   "Moderate": 2,
   "Watch": 2,
-  "Low": 1,
-  "Normal": 1,
   "Complacent": 2,
-  "Tightening": 3,
-  "Inverted Risk": 4
+  "Low": 1,
+  "Normal": 1
 };
 
 function statusClass(status) {
-  if (!status) return "";
+  if (!status) return "green";
   const s = status.toLowerCase();
   if (s.includes("extreme") || s.includes("inverted")) return "red";
   if (s.includes("high") || s.includes("elevated") || s.includes("tight")) return "orange";
@@ -145,66 +161,69 @@ function statusClass(status) {
 fetch("data.json")
   .then(res => res.json())
   .then(data => {
+
     // Core fields
-    
     document.getElementById("updated").textContent = `Data as of ${data.date}`;
     document.getElementById("scoreValue").textContent = data.score;
-
     document.getElementById("level").textContent = data.level;
     document.getElementById("brief").textContent = data.brief;
 
-    // Distance to extreme risk (DEFINE FIRST)
+    // Distance to extreme
     const EXTREME_THRESHOLD = 75;
     const distance = Math.max(0, EXTREME_THRESHOLD - data.score);
     document.getElementById("distance").textContent =
       `${distance} points from Extreme Risk`;
 
-    // Today's change
-    document.getElementById("changeSummary").textContent =
-      data.changeSummary || "No change data available.";
+    // Today’s change + glyph
+    const changeText = data.changeSummary || "No change data available.";
+    const glyph = document.getElementById("changeGlyph");
+    const summary = document.getElementById("changeSummary");
 
-// Sort indicators by risk
-data.indicators
-  .sort((a, b) => {
-    const aRank = STATUS_ORDER[a.status] || 0;
-    const bRank = STATUS_ORDER[b.status] || 0;
-    return bRank - aRank;
+    summary.textContent = changeText;
+    glyph.className = "change-glyph";
+
+    if (/up|increase|rise|higher|widen/i.test(changeText)) {
+      glyph.textContent = "▲";
+      glyph.classList.add("change-up");
+    } else if (/down|decrease|fall|lower|narrow/i.test(changeText)) {
+      glyph.textContent = "▼";
+      glyph.classList.add("change-down");
+    } else {
+      glyph.textContent = "•";
+      glyph.classList.add("change-flat");
+    }
+
+    // Indicators
+    const container = document.getElementById("indicators");
+    container.innerHTML = "";
+
+    if (!Array.isArray(data.indicators)) {
+      container.innerHTML = "<p>No indicators available.</p>";
+      return;
+    }
+
+    data.indicators
+      .sort((a, b) => (STATUS_ORDER[b.status] || 0) - (STATUS_ORDER[a.status] || 0))
+      .forEach(indicator => {
+        const value = Math.min(100, indicator.value || 0);
+        const color = statusClass(indicator.status);
+
+        const div = document.createElement("div");
+        div.className = "indicator";
+        div.innerHTML = `
+          <h3>${indicator.name}</h3>
+          <div class="bar">
+            <div class="bar-fill ${color}" style="width:${value}%"></div>
+          </div>
+          <div class="value">${value} / 100</div>
+          <div class="status">${indicator.status}</div>
+          <div class="desc">${indicator.description}</div>
+        `;
+        container.appendChild(div);
+      });
   })
-  .forEach(indicator => {
-    const div = document.createElement("div");
-    div.className = "card indicator";
-
-    const barWidth = Math.min(100, indicator.value || 0);
-    const colorClass = statusClass(indicator.status);
-
-    div.innerHTML = `
-      <h3>${indicator.name}</h3>
-
-      <div class="bar">
-        <div class="bar-fill ${colorClass}" style="width:${barWidth}%"></div>
-      </div>
-
-      <p class="value">
-        ${indicator.value ?? "—"} / 100
-        ${indicator.threshold ? `<span class="threshold">⚠ threshold ${indicator.threshold}</span>` : ""}
-      </p>
-
-      <p class="status ${colorClass}">
-        ${indicator.status}
-      </p>
-
-      <p class="desc">${indicator.description}</p>
-    `;
-
-    container.appendChild(div);
-  });
-
-
-  .catch(err => {
-    console.error("Dashboard load error:", err);
-  });
+  .catch(err => console.error("Dashboard load error:", err));
 </script>
-
 
 </body>
 </html>
