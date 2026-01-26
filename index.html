@@ -14,6 +14,39 @@ h1{text-align:center}
   border-radius: 12px;
   padding: 1rem;
 }
+
+.indicator h3 {
+  margin-bottom: 0.5rem;
+}
+
+.bar {
+  background: #1e293b;
+  border-radius: 6px;
+  overflow: hidden;
+  height: 14px;
+  margin: 0.4rem 0;
+  position: relative;
+}
+
+.bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #22c55e, #f59e0b, #ef4444);
+}
+
+.bar-threshold {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #facc15;
+  opacity: 0.9;
+}
+
+.indicator-meta {
+  font-size: 0.85rem;
+  opacity: 0.85;
+  margin-top: 0.3rem;
+}
 .score-max {
   opacity: 0.6;
   font-size: 0.6em;
@@ -73,16 +106,31 @@ fetch("data.json")
     }
 
     data.indicators.forEach(indicator => {
-      const div = document.createElement("div");
-      div.className = "indicator";
-      div.innerHTML = `
-        <h3>${indicator.name}</h3>
-        <p><strong>Status:</strong> ${indicator.status}</p>
-        <p>${indicator.description}</p>
-      `;
-      container.appendChild(div);
-    });
-  })
+  const div = document.createElement("div");
+  div.className = "indicator";
+
+  const value = indicator.value ?? 0;
+  const threshold = indicator.threshold ?? 100;
+
+  div.innerHTML = `
+    <h3>${indicator.name}</h3>
+
+    <div class="bar">
+      <div class="bar-fill" style="width:${value}%;"></div>
+      <div class="bar-threshold" style="left:${threshold}%;"></div>
+    </div>
+
+    <div class="indicator-meta">
+      ${value} / 100 <br>
+      ⚠ <strong>${indicator.status}</strong> (threshold: ${threshold})
+    </div>
+
+    <p>${indicator.description}</p>
+  `;
+
+  container.appendChild(div);
+});
+
   .catch(err => {
     console.error("Dashboard load error:", err);
   });
