@@ -19,6 +19,10 @@ h1{text-align:center}
   gap: 1rem;
   margin-top: 2rem;
 }
+  .max {
+  font-size: 1.2rem;
+  opacity: 0.6;
+}
 .green{color:#22c55e}.orange{color:#f59e0b}.red{color:#ef4444}
 .updated{opacity:.7;margin-top:1rem;text-align:right}
 .brief{background:#020617;border-left:4px solid #f59e0b;padding:1rem;margin-top:1.5rem}
@@ -27,6 +31,11 @@ h1{text-align:center}
 <body>
 <h1>📊 Bubble Risk Dashboard</h1>
 <div id="score" class="score">Loading…</div>
+
+  <span class="max"> / 100</span>
+  <div id="distance" class="distance"></div>
+
+  
   <div id="level" class="level"></div>
   <div id="brief" class="brief"></div>
   <div class="change-summary">
@@ -44,6 +53,12 @@ fetch("data.json")
     document.getElementById("level").textContent = data.level;
     document.getElementById("brief").textContent = data.brief;
 
+    // Distance to extreme risk (DEFINE FIRST)
+    const EXTREME_THRESHOLD = 75;
+    const distance = Math.max(0, EXTREME_THRESHOLD - data.score);
+    document.getElementById("distance").textContent =
+      `${distance} points from Extreme Risk`;
+
     // Today's change
     document.getElementById("changeSummary").textContent =
       data.changeSummary || "No change data available.";
@@ -60,13 +75,11 @@ fetch("data.json")
     data.indicators.forEach(indicator => {
       const div = document.createElement("div");
       div.className = "indicator";
-
       div.innerHTML = `
         <h3>${indicator.name}</h3>
         <p><strong>Status:</strong> ${indicator.status}</p>
         <p>${indicator.description}</p>
       `;
-
       container.appendChild(div);
     });
   })
@@ -74,6 +87,7 @@ fetch("data.json")
     console.error("Dashboard load error:", err);
   });
 </script>
+
 
 </body>
 </html>
