@@ -14,7 +14,7 @@ h1{text-align:center}
   border-radius: 12px;
   padding: 1rem;
 }
- .score-max {
+.score-max {
   opacity: 0.6;
   font-size: 0.6em;
 }
@@ -31,7 +31,9 @@ h1{text-align:center}
 </head>
 <body>
 <h1>Bubble Risk Dashboard</h1>
-<div id="score" class="score">Loading… </span><span class="score-max">/ 100</span></div>
+<div class="score">
+  <span id="scoreValue">--</span><span class="score-max"> / 100</span>
+</div>
   <div id="distance" class="distance"></div>
   <div id="level" class="level"></div>
   <div id="brief" class="brief"></div>
@@ -46,7 +48,8 @@ fetch("data.json")
   .then(data => {
     // Core fields
     document.getElementById("updated").textContent = `Data as of ${data.date}`;
-    document.getElementById("score").textContent = data.score;
+    document.getElementById("scoreValue").textContent = data.score;
+
     document.getElementById("level").textContent = data.level;
     document.getElementById("brief").textContent = data.brief;
 
