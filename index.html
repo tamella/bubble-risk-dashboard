@@ -20,18 +20,18 @@ h1{text-align:center}
 }
 
 .bar {
-  background: #1e293b;
+  background: #020617;
   border-radius: 6px;
+  height: 10px;
   overflow: hidden;
-  height: 14px;
-  margin: 0.4rem 0;
-  position: relative;
+  margin: 0.5rem 0;
 }
 
 .bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, #22c55e, #f59e0b, #ef4444);
+  transition: width 0.6s ease;
 }
+
 
 .bar-threshold {
   position: absolute;
@@ -57,7 +57,48 @@ h1{text-align:center}
   gap: 1rem;
   margin-top: 2rem;
 }
-.green{color:#22c55e}.orange{color:#f59e0b}.red{color:#ef4444}
+  .status {
+  font-weight: 600;
+  margin-top: 0.25rem;
+}
+
+.value {
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+
+.threshold {
+  margin-left: 0.5rem;
+  opacity: 0.7;
+  font-size: 0.8rem;
+}
+
+.desc {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+  /* Status coloring */
+.status-high {
+  border-left: 4px solid #ef4444;
+}
+
+.status-medium {
+  border-left: 4px solid #f59e0b;
+}
+
+.status-low {
+  border-left: 4px solid #22c55e;
+}
+
+.status {
+  font-weight: 600;
+  margin-top: 0.25rem;
+}
+.green { background: #22c55e; color: #22c55e; }
+.yellow { background: #eab308; color: #eab308; }
+.orange { background: #f59e0b; color: #f59e0b; }
+.red { background: #ef4444; color: #ef4444; }
 .updated{opacity:.7;margin-top:1rem;text-align:right}
 .brief{background:#020617;border-left:4px solid #f59e0b;padding:1rem;margin-top:1.5rem}
 </style>
@@ -76,10 +117,36 @@ h1{text-align:center}
 <div id="indicators" class="indicator-grid"></div>
 <div id="updated" class="updated"></div>
 <script>
+  
+const STATUS_ORDER = {
+  "Extreme": 5,
+  "High": 4,
+  "Elevated": 3,
+  "Rising": 3,
+  "Compressed": 3,
+  "Moderate": 2,
+  "Watch": 2,
+  "Low": 1,
+  "Normal": 1,
+  "Complacent": 2,
+  "Tightening": 3,
+  "Inverted Risk": 4
+};
+
+function statusClass(status) {
+  if (!status) return "";
+  const s = status.toLowerCase();
+  if (s.includes("extreme") || s.includes("inverted")) return "red";
+  if (s.includes("high") || s.includes("elevated") || s.includes("tight")) return "orange";
+  if (s.includes("moderate") || s.includes("watch")) return "yellow";
+  return "green";
+}
+
 fetch("data.json")
   .then(res => res.json())
   .then(data => {
     // Core fields
+    
     document.getElementById("updated").textContent = `Data as of ${data.date}`;
     document.getElementById("scoreValue").textContent = data.score;
 
@@ -96,40 +163,42 @@ fetch("data.json")
     document.getElementById("changeSummary").textContent =
       data.changeSummary || "No change data available.";
 
-    // Indicators
-    const container = document.getElementById("indicators");
-    container.innerHTML = "";
+// Sort indicators by risk
+data.indicators
+  .sort((a, b) => {
+    const aRank = STATUS_ORDER[a.status] || 0;
+    const bRank = STATUS_ORDER[b.status] || 0;
+    return bRank - aRank;
+  })
+  .forEach(indicator => {
+    const div = document.createElement("div");
+    div.className = "card indicator";
 
-    if (!Array.isArray(data.indicators)) {
-      container.innerHTML = "<p>No indicators available.</p>";
-      return;
-    }
+    const barWidth = Math.min(100, indicator.value || 0);
+    const colorClass = statusClass(indicator.status);
 
-    data.indicators.forEach(indicator => {
-  const div = document.createElement("div");
-  div.className = "indicator";
+    div.innerHTML = `
+      <h3>${indicator.name}</h3>
 
-  const value = indicator.value ?? 0;
-  const threshold = indicator.threshold ?? 100;
+      <div class="bar">
+        <div class="bar-fill ${colorClass}" style="width:${barWidth}%"></div>
+      </div>
 
-  div.innerHTML = `
-    <h3>${indicator.name}</h3>
+      <p class="value">
+        ${indicator.value ?? "—"} / 100
+        ${indicator.threshold ? `<span class="threshold">⚠ threshold ${indicator.threshold}</span>` : ""}
+      </p>
 
-    <div class="bar">
-      <div class="bar-fill" style="width:${value}%;"></div>
-      <div class="bar-threshold" style="left:${threshold}%;"></div>
-    </div>
+      <p class="status ${colorClass}">
+        ${indicator.status}
+      </p>
 
-    <div class="indicator-meta">
-      ${value} / 100 <br>
-      ⚠ <strong>${indicator.status}</strong> (threshold: ${threshold})
-    </div>
+      <p class="desc">${indicator.description}</p>
+    `;
 
-    <p>${indicator.description}</p>
-  `;
+    container.appendChild(div);
+  });
 
-  container.appendChild(div);
-});
 
   .catch(err => {
     console.error("Dashboard load error:", err);
